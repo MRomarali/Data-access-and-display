@@ -14,40 +14,10 @@ import java.util.List;
 @CrossOrigin
 @RequestMapping("/api/customers")
 public class Controller {
-    static class ConnectionManager {
-        // Pull a file from the resource folder: Northwind_small.sqlite
-        static final String URL = "jdbc:sqlite:src/main/resources/chinook.db";
-        static private ConnectionManager instance;
-        private Connection connection;
-        // Single pattern
-        static ConnectionManager getInstance(){
-            if(instance == null) instance = new ConnectionManager();
-            return instance;
-        }
-        private ConnectionManager(){
-            try {
-                connection = DriverManager.getConnection(URL);
-            } catch (SQLException e) {
-                e.printStackTrace();
-                System.exit(-1);
-            }
-        };
-        public Connection getConnection() {
-            return connection;
-        }
-    }
     // SQL Queries
     // Add database connection
     ConnectionManager manager = new ConnectionManager();
     Connection db = manager.getConnection();
-    static public class Customer {
-        String name;
-    }
-
-    static class Genre{
-
-    }
-
 
     // POSTS
     // /api/customers
@@ -62,7 +32,8 @@ public class Controller {
     @PatchMapping("/{id}")
 
     public String findById(@PathVariable("id") String id) throws SQLException {
-        PreparedStatement statement = db.prepareStatement("select CustomerId, FirstName, LastName, Country, PostalCode, Phone, Email from Customer where CustomerId = ?");
+        PreparedStatement statement = db.prepareStatement("" +
+                " ?");
         statement.setString(1, id);
         ResultSet result = statement.executeQuery();
 
@@ -81,8 +52,14 @@ public class Controller {
     // /api/customers/:id
     @CrossOrigin
     @GetMapping("/{id}")
-    public String getCustomerById(@PathVariable("id") String id) {
-        return " customerById";
+    public Customer getCustomerById(@PathVariable("id") String id) throws SQLException {
+        PreparedStatement statement = db.prepareStatement("select CustomerId, FirstName, LastName, Country, PostalCode, Phone, Email from Customer where CustomerId = ?");
+        statement.setString(1, id);
+        ResultSet r = statement.executeQuery();
+        StringBuilder results = new StringBuilder();
+        String[] queryParams = "CustomerId, FirstName, LastName, Country, PostalCode, Phone, Email".split(", ");
+        Customer customer = new Customer(r.getString("CustomerId"), r.getString("FirstName"), r.getString("LastName"), r.getString("Country"), r.getString("PostalCode"), r.getString("Phone"), r.getString("Email"));
+        return customer;
     }
 
     // /api/customers/countries
@@ -104,6 +81,86 @@ public class Controller {
     @GetMapping("/{id}/popular/genre")
     public String getPopularGenre(@PathVariable("id") String id) {
         return "genre" + id;
+    }
+
+    static class ConnectionManager {
+        // Pull a file from the resource folder: Northwind_small.sqlite
+        static final String URL = "jdbc:sqlite:src/main/resources/data.sqlite";
+        static private ConnectionManager instance;
+        private Connection connection;
+
+        private ConnectionManager() {
+            try {
+                connection = DriverManager.getConnection(URL);
+            } catch (SQLException e) {
+                e.printStackTrace();
+                System.exit(-1);
+            }
+        }
+
+        // Single pattern
+        static ConnectionManager getInstance() {
+            if (instance == null) instance = new ConnectionManager();
+            return instance;
+        }
+
+        ;
+
+        public Connection getConnection() {
+            return connection;
+        }
+    }
+
+    static public class Customer {
+        String id;
+        String firstName;
+        String lastName;
+        String country;
+        String postalCode;
+        String phoneNumber;
+        String email;
+
+        public Customer(String id, String firstName, String lastName, String country, String postalCode, String phoneNumber, String email) {
+            this.id = id;
+            this.firstName = firstName;
+            this.lastName = lastName;
+            this.country = country;
+            this.postalCode = postalCode;
+            this.phoneNumber = phoneNumber;
+            this.email = email;
+        }
+
+        public String getId() {
+            return id;
+        }
+
+        public String getFirstName() {
+            return firstName;
+        }
+
+        public String getLastName() {
+            return lastName;
+        }
+
+        public String getCountry() {
+            return country;
+        }
+
+        public String getPostalCode() {
+            return postalCode;
+        }
+
+        public String getPhoneNumber() {
+            return phoneNumber;
+        }
+
+        public String getEmail() {
+            return email;
+        }
+    }
+
+    static class Genre {
+
     }
 
 }
