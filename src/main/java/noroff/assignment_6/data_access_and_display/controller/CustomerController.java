@@ -4,6 +4,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -13,7 +14,7 @@ import java.util.List;
 @RestController
 @CrossOrigin
 @RequestMapping("/api/customers")
-public class Controller {
+public class CustomerController {
     // SQL Queries
     // Add database connection
     ConnectionManager manager = new ConnectionManager();
@@ -23,15 +24,33 @@ public class Controller {
     // /api/customers
     @CrossOrigin
     @PostMapping("")
-    public Customer addCustomer(@RequestBody Customer body) {
-        return body;
+    public Object addCustomer(@RequestBody Customer c) {
+        return addCustomerToDatabase(c);
+    }
+
+    private Object addCustomerToDatabase(Customer c) {
+        try{
+            var s = db.prepareStatement("insert into Customer (FirstName, LastName, Country, PostalCode, Phone, Email) values(?,?,?,?,?,?);");
+            s.setString(1, c.firstName);
+            s.setString(2, c.lastName);
+            s.setString(3, c.country);
+            s.setString(4, c.postalCode);
+            s.setString(5, c.phoneNumber);
+            s.setString(6, c.email);
+            var result = s.executeUpdate();
+            return result;
+        }
+        catch(SQLException e){
+            e.printStackTrace();
+            return "Error user is not found";
+        }
     }
 
     // /api/customers/:id
     @CrossOrigin
     @PatchMapping("/{id}")
 
-    public String findById(@PathVariable("id") String id) throws SQLException {
+    public Object findById(@PathVariable("id") String id) throws SQLException {
         PreparedStatement statement = db.prepareStatement("" +
                 " ?");
         statement.setString(1, id);
@@ -45,41 +64,59 @@ public class Controller {
     // /api/customers?limit=10&offset=50
     @CrossOrigin
     @GetMapping("")
-    public String getCustomer(@RequestParam(required = false) String limit, @RequestParam(required = false) String offset) {
-        return "customer object" + " limit: " + limit + " offset: " + offset;
+    public Object getCustomer(@RequestParam(required = false) String limit, @RequestParam(required = false) String offset) {
+        try{
+            var statement = db.prepareStatement("select CustomerId, FirstName, LastName, Country, PostalCode, Phone, Email from Customer;");
+            var r = statement.executeQuery();
+            var customers = new LinkedList<Customer>();
+            do{
+                var customer = new Customer(r.getString("CustomerId"), r.getString("FirstName"), r.getString("LastName"), r.getString("Country"), r.getString("PostalCode"), r.getString("Phone"), r.getString("Email"));
+                customers.addLast(customer);
+            }while(r.next());
+            return customers;
+        }
+        catch(SQLException e){
+            e.printStackTrace();
+            return "failed to find any customers";
+        }
     }
 
     // /api/customers/:id
     @CrossOrigin
     @GetMapping("/{id}")
-    public Customer getCustomerById(@PathVariable("id") String id) throws SQLException {
-        PreparedStatement statement = db.prepareStatement("select CustomerId, FirstName, LastName, Country, PostalCode, Phone, Email from Customer where CustomerId = ?");
-        statement.setString(1, id);
-        ResultSet r = statement.executeQuery();
-        StringBuilder results = new StringBuilder();
-        String[] queryParams = "CustomerId, FirstName, LastName, Country, PostalCode, Phone, Email".split(", ");
-        Customer customer = new Customer(r.getString("CustomerId"), r.getString("FirstName"), r.getString("LastName"), r.getString("Country"), r.getString("PostalCode"), r.getString("Phone"), r.getString("Email"));
-        return customer;
+    public Object getCustomerById(@PathVariable("id") String id)  {
+        try{
+            PreparedStatement statement = db.prepareStatement("select CustomerId, FirstName, LastName, Country, PostalCode, Phone, Email from Customer where CustomerId = ?");
+            statement.setString(1, id);
+            var r = statement.executeQuery();
+            Customer customer = new Customer(r.getString("CustomerId"), r.getString("FirstName"), r.getString("LastName"), r.getString("Country"), r.getString("PostalCode"), r.getString("Phone"), r.getString("Email"));
+            return customer;
+        }
+        catch (SQLException e){
+            e.printStackTrace();
+            return "Error no customer was found with id: " + id;
+        }
+
     }
 
     // /api/customers/countries
     @CrossOrigin
     @GetMapping("/countries")
-    public List<?> getCountries() {
+    public Object getCountries() {
         return new ArrayList<String>();
     }
 
     // /api/customers/spenders
     @CrossOrigin
     @GetMapping("/spenders")
-    public List<?> getSpenders() {
+    public Object getSpenders() {
         return new ArrayList<String>();
     }
 
     // /api/customers/:id/popular/genre
     @CrossOrigin
     @GetMapping("/{id}/popular/genre")
-    public String getPopularGenre(@PathVariable("id") String id) {
+    public Object getPopularGenre(@PathVariable("id") String id) {
         return "genre" + id;
     }
 
@@ -104,14 +141,13 @@ public class Controller {
             return instance;
         }
 
-        ;
-
         public Connection getConnection() {
             return connection;
         }
+
     }
 
-    static public class Customer {
+    public static class Customer {
         String id;
         String firstName;
         String lastName;
@@ -159,8 +195,24 @@ public class Controller {
         }
     }
 
-    static class Genre {
+    public static class Genre {
+        int id;
+        String name;
+        public Genre(int id, String name){
+            this.id = id;
+            this.name = name;
+        }
 
+        public int getId() {
+            return id;
+        }
+
+        public String getName() {
+            return name;
+        }
     }
+
+
+
 
 }
