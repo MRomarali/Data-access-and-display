@@ -2,6 +2,7 @@ package noroff.assignment_6.data_access_and_display.controller;
 
 import org.springframework.web.bind.annotation.*;
 
+import java.io.Serializable;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -64,7 +65,11 @@ public class CustomerController {
     // /api/customers?limit=10&offset=50
     @CrossOrigin
     @GetMapping("")
-    public Object getCustomer(@RequestParam(required = false) String limit, @RequestParam(required = false) String offset) {
+    public Object getCustomers(@RequestParam(required = false) String limit, @RequestParam(required = false) String offset) {
+        return getCustomersFromDatabase();
+    }
+
+    private Object getCustomersFromDatabase() {
         try{
             var statement = db.prepareStatement("select CustomerId, FirstName, LastName, Country, PostalCode, Phone, Email from Customer;");
             var r = statement.executeQuery();
@@ -85,6 +90,10 @@ public class CustomerController {
     @CrossOrigin
     @GetMapping("/{id}")
     public Object getCustomerById(@PathVariable("id") String id)  {
+        return getCustomerByIdFromDatabase(id);
+    }
+
+    private Object getCustomerByIdFromDatabase(String id) {
         try{
             PreparedStatement statement = db.prepareStatement("select CustomerId, FirstName, LastName, Country, PostalCode, Phone, Email from Customer where CustomerId = ?");
             statement.setString(1, id);
@@ -96,14 +105,46 @@ public class CustomerController {
             e.printStackTrace();
             return "Error no customer was found with id: " + id;
         }
-
     }
 
     // /api/customers/countries
     @CrossOrigin
     @GetMapping("/countries")
     public Object getCountries() {
-        return new ArrayList<String>();
+        try {
+            var statement = db.prepareStatement("select Country, count(CustomerId) as \"count\" from Customer group by Country order by count desc;");
+            class CountryCount{
+                String country;
+                String count;
+                public CountryCount(String country, String count) {
+                    this.country = country;
+                    this.count = count;
+                }
+
+                public String getCountry() {
+                    return country;
+                }
+
+                public String getCount() {
+                    return count;
+                }
+            }
+
+            var r = statement.executeQuery();
+            var list = new LinkedList<CountryCount>();
+            do{
+                String country = r.getString("Country");
+                String count = r.getString("count");
+                list.addLast(new CountryCount(country, count));
+            }
+            while(r.next());
+            return list;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return "Error";
+        }
+
+
     }
 
     // /api/customers/spenders
