@@ -2,6 +2,7 @@ package noroff.assignment_6.data_access_and_display.controller;
 
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,22 +14,59 @@ import java.util.List;
 @CrossOrigin
 @RequestMapping("/api/customers")
 public class Controller {
-    static public class Customer {
+    static class ConnectionManager {
+        // Pull a file from the resource folder: Northwind_small.sqlite
+        static final String URL = "jdbc:sqlite:src/main/resources/chinook.db";
+        static private ConnectionManager instance;
+        private Connection connection;
+        // Single pattern
+        static ConnectionManager getInstance(){
+            if(instance == null) instance = new ConnectionManager();
+            return instance;
+        }
+        private ConnectionManager(){
+            try {
+                connection = DriverManager.getConnection(URL);
+            } catch (SQLException e) {
+                e.printStackTrace();
+                System.exit(-1);
+            }
+        };
+        public Connection getConnection() {
+            return connection;
+        }
     }
+    // SQL Queries
+    // Add database connection
+    ConnectionManager manager = new ConnectionManager();
+    Connection db = manager.getConnection();
+    static public class Customer {
+        String name;
+    }
+
+    static class Genre{
+
+    }
+
 
     // POSTS
     // /api/customers
     @CrossOrigin
     @PostMapping("")
-    public String addCustomer(@RequestBody Customer body) {
-        return "add new customer" + body;
+    public Customer addCustomer(@RequestBody Customer body) {
+        return body;
     }
 
     // /api/customers/:id
     @CrossOrigin
     @PatchMapping("/{id}")
-    public String findById(@PathVariable("id") String id) {
-        return "Id" + id;
+
+    public String findById(@PathVariable("id") String id) throws SQLException {
+        PreparedStatement statement = db.prepareStatement("select CustomerId, FirstName, LastName, Country, PostalCode, Phone, Email from Customer where CustomerId = ?");
+        statement.setString(1, id);
+        ResultSet result = statement.executeQuery();
+
+        return result.toString();
     }
 
     // GET
