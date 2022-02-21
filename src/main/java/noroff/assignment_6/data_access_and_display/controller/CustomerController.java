@@ -50,8 +50,7 @@ public class CustomerController {
     // /api/customers/:id
     @CrossOrigin
     @PatchMapping("/{id}")
-
-    public Object findById(@PathVariable("id") String id) throws SQLException {
+    public Object updateCustomerById(@PathVariable("id") String id) throws SQLException {
         PreparedStatement statement = db.prepareStatement("" +
                 " ?");
         statement.setString(1, id);
