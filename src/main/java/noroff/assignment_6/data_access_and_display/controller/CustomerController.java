@@ -6,7 +6,6 @@ import java.io.Serializable;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.List;
 
 /**
  * REST API
@@ -111,6 +110,12 @@ public class CustomerController {
     @CrossOrigin
     @GetMapping("/countries")
     public Object getCountries() {
+        return getCustomerCountryCountFromDatabase();
+
+
+    }
+
+    private Object getCustomerCountryCountFromDatabase() {
         try {
             var statement = db.prepareStatement("select Country, count(CustomerId) as \"count\" from Customer group by Country order by count desc;");
             class CountryCount{
@@ -143,15 +148,68 @@ public class CustomerController {
             e.printStackTrace();
             return "Error";
         }
-
-
     }
 
     // /api/customers/spenders
     @CrossOrigin
     @GetMapping("/spenders")
     public Object getSpenders() {
-        return new ArrayList<String>();
+        return getSpendersFromDatabase();
+    }
+
+    private Object getSpendersFromDatabase() {
+        try {
+            var statement = db.prepareStatement("select Customer.CustomerId, FirstName, LastName, sum(total) as \"total\"\n" +
+                    "from Customer\n" +
+                    "    join Invoice\n" +
+                    "        on Customer.CustomerId = Invoice.CustomerId\n" +
+                    "group by Invoice.CustomerId\n" +
+                    "order by total desc;");
+
+            var resultSet = statement.executeQuery();
+            class Spender{
+                String customerId;
+                String firstName;
+                String lastName;
+                String total;
+
+                public Spender(String customerId, String firstName, String lastName, String total) {
+                    this.customerId = customerId;
+                    this.firstName = firstName;
+                    this.lastName = lastName;
+                    this.total = total;
+                }
+
+                public String getCustomerId() {
+                    return customerId;
+                }
+
+                public String getFirstName() {
+                    return firstName;
+                }
+
+                public String getLastName() {
+                    return lastName;
+                }
+
+                public String getTotal() {
+                    return total;
+                }
+            }
+            var spenders = new LinkedList<Spender>();
+            do{
+                var id = resultSet.getString("CustomerId");
+                var firstName = resultSet.getString("FirstName");
+                var lastName = resultSet.getString("LastName");
+                var total = resultSet.getString("total");
+                spenders.addLast(new Spender(id, firstName,lastName, total));
+            }
+            while(resultSet.next());
+            return spenders;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return "Error";
+        }
     }
 
     // /api/customers/:id/popular/genre
