@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.*;
 import java.io.Serializable;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 
 /**
@@ -73,10 +74,10 @@ public class CustomerController {
             var statement = db.prepareStatement("select CustomerId, FirstName, LastName, Country, PostalCode, Phone, Email from Customer;");
             var r = statement.executeQuery();
             var customers = new LinkedList<Customer>();
-            do{
+            while(r.next()){
                 var customer = new Customer(r.getString("CustomerId"), r.getString("FirstName"), r.getString("LastName"), r.getString("Country"), r.getString("PostalCode"), r.getString("Phone"), r.getString("Email"));
                 customers.addLast(customer);
-            }while(r.next());
+            }
             return customers;
         }
         catch(SQLException e){
@@ -137,12 +138,11 @@ public class CustomerController {
 
             var r = statement.executeQuery();
             var list = new LinkedList<CountryCount>();
-            do{
+            while(r.next()){
                 String country = r.getString("Country");
                 String count = r.getString("count");
                 list.addLast(new CountryCount(country, count));
             }
-            while(r.next());
             return list;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -197,14 +197,14 @@ public class CustomerController {
                 }
             }
             var spenders = new LinkedList<Spender>();
-            do{
+            while(resultSet.next()){
                 var id = resultSet.getString("CustomerId");
                 var firstName = resultSet.getString("FirstName");
                 var lastName = resultSet.getString("LastName");
                 var total = resultSet.getString("total");
                 spenders.addLast(new Spender(id, firstName,lastName, total));
             }
-            while(resultSet.next());
+
             return spenders;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -216,7 +216,50 @@ public class CustomerController {
     @CrossOrigin
     @GetMapping("/{id}/popular/genre")
     public Object getPopularGenre(@PathVariable("id") String id) {
-        return "genre" + id;
+        return getPopularGenreFromDatabase(id);
+    }
+
+    private Object getPopularGenreFromDatabase(String id) {
+        PreparedStatement statement = null;
+        try {
+            statement = db.prepareStatement("with genreView as \n" +
+                    "(select Genre.GenreId, Genre.Name, count(Genre.GenreId) as \"count\" from customer\n" +
+                    "    join Invoice on customer.CustomerId = Invoice.CustomerId\n" +
+                    "    join InvoiceLine on Invoice.InvoiceId = InvoiceLine.InvoiceId\n" +
+                    "    join Track on InvoiceLine.TrackId = Track.TrackId\n" +
+                    "    join Genre on Track.GenreId = Genre.GenreId\n" +
+                    "where Invoice.CustomerId = ? group by Genre.GenreId),\n" +
+                    "                  maxView as\n" +
+                    "         (select max(count) as \"count\" from genreView),\n" +
+                    "                  popularGenre as\n" +
+                    "         (select GenreId,Name, maxView.count as \"count\" from maxView join genreView on maxView.count = genreView.count)\n" +
+                    "select * from popularGenre;\n");
+            statement.setString(1, id);
+            var result = statement.executeQuery();
+            var genres = new LinkedList<Genre>();
+             class GenreCount extends Genre{
+                 final String count;
+                 public GenreCount(String id, String name, String count) {
+                     super(id, name);
+                     this.count = count;
+                 }
+
+                 public String getCount() {
+                     return count;
+                 }
+             }
+            while(result.next()){
+                var genreId = result.getString("GenreId");
+                var name = result.getString("Name");
+                var count = result.getString("count");
+                genres.addLast(new GenreCount(genreId,name, count));
+            }
+
+            return genres;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return "Error";
+        }
     }
 
     static class ConnectionManager {
@@ -295,14 +338,14 @@ public class CustomerController {
     }
 
     public static class Genre {
-        int id;
+        String id;
         String name;
-        public Genre(int id, String name){
+        public Genre(String id, String name){
             this.id = id;
             this.name = name;
         }
 
-        public int getId() {
+        public String getId() {
             return id;
         }
 
