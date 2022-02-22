@@ -39,9 +39,9 @@ public class CustomerController {
 
     // /api/customers/:id
     @CrossOrigin
-    @PatchMapping("/{id}")
-    public Object updateCustomerById(@PathVariable("id") String id) throws SQLException {
-        Object result = customerService.updateCustomerById(c.getId());
+    @PutMapping("/{id}")
+    public Object updateCustomerById(@PathVariable("id") String id, @RequestBody Customer customer){
+        Object result = customerService.updateCustomerById(id, customer);
         return result.toString();
     }
 
