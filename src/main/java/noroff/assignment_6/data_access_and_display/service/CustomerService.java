@@ -4,6 +4,7 @@ import noroff.assignment_6.data_access_and_display.data_access.ConnectionFactory
 import noroff.assignment_6.data_access_and_display.models.Customer;
 import noroff.assignment_6.data_access_and_display.models.Genre;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.sql.*;
 import java.util.LinkedList;
@@ -15,9 +16,12 @@ public class CustomerService implements ICustomerService {
     // Add database connection
     private CustomerService customerRepository;
 
+    public Object addCustomer(@RequestBody Customer c) {
+        return addCustomerToDatabase(c);
+    }
 
     public Object addCustomerToDatabase(Customer c) {
-        try(Connection db = ConnectionFactory.getConnection()){
+        try (Connection db = ConnectionFactory.getConnection()) {
 
             var s = db.prepareStatement("insert into Customer (FirstName, LastName, Country, PostalCode, Phone, Email) values(?,?,?,?,?,?);");
             s.setString(1, c.getFirstName());
@@ -28,8 +32,7 @@ public class CustomerService implements ICustomerService {
             s.setString(6, c.getEmail());
             var result = s.executeUpdate();
             return result;
-        }
-        catch(SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
             return "Error user is not found";
         }
@@ -38,8 +41,8 @@ public class CustomerService implements ICustomerService {
 
     // /api/customers/:id
     public Object updateCustomerById(String id, Customer customer) {
-        try(Connection db = ConnectionFactory.getConnection()) {
-            if(!customer.getId().equals(id)) return "Id does not match customer Id";
+        try (Connection db = ConnectionFactory.getConnection()) {
+            if (!customer.getId().equals(id)) return "Id does not match customer Id";
             var s = db.prepareStatement("update Customer set FirstName = ?, LastName = ?, Country = ?, PostalCode = ?, Phone = ?, Email = ? where CustomerId = ?;");
             s.setString(1, customer.getFirstName());
             s.setString(2, customer.getLastName());
@@ -49,56 +52,55 @@ public class CustomerService implements ICustomerService {
             s.setString(6, customer.getEmail());
             s.setString(7, customer.getId());
             var result = s.executeUpdate();
-            if(result > 0){
+            if (result > 0) {
                 return customer;
-            }
-            else {
-                return "customer with id:"+ id+ " not found";
+            } else {
+                return "customer with id:" + id + " not found";
             }
 
         } catch (SQLException e) {
             e.printStackTrace();
-        return "Server error";
+            return "Server error";
         }
     }
 
     public Object getCustomersFromDatabase() {
-        try(Connection db = ConnectionFactory.getConnection()){
+        try (Connection db = ConnectionFactory.getConnection()) {
             var statement = db.prepareStatement("select CustomerId, FirstName, LastName, Country, PostalCode, Phone, Email from Customer;");
             var r = statement.executeQuery();
             var customers = new LinkedList<Customer>();
-            while(r.next()){
+            while (r.next()) {
                 var customer = new Customer(r.getString("CustomerId"), r.getString("FirstName"), r.getString("LastName"), r.getString("Country"), r.getString("PostalCode"), r.getString("Phone"), r.getString("Email"));
                 customers.addLast(customer);
             }
             return customers;
-        }
-        catch(SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
             return "failed to find any customers";
         }
     }
 
     public Object getCustomerByIdFromDatabase(String id) {
-        try(Connection db = ConnectionFactory.getConnection()){
+        try (Connection db = ConnectionFactory.getConnection()) {
             PreparedStatement statement = db.prepareStatement("select CustomerId, FirstName, LastName, Country, PostalCode, Phone, Email from Customer where CustomerId = ?");
             statement.setString(1, id);
             var r = statement.executeQuery();
             Customer customer = new Customer(r.getString("CustomerId"), r.getString("FirstName"), r.getString("LastName"), r.getString("Country"), r.getString("PostalCode"), r.getString("Phone"), r.getString("Email"));
             return customer;
-        }
-        catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
+            System.out.println("No customer was found with id: "+ id);
             return "Error no customer was found with id: " + id;
         }
     }
 
     public Object getCustomerCountryCountFromDatabase() {
-        try (Connection db = ConnectionFactory.getConnection()){
+        try (Connection db = ConnectionFactory.getConnection()) {
             var statement = db.prepareStatement("select Country, count(CustomerId) as \"count\" from Customer group by Country order by count desc;");
-            class CountryCount{
+            class CountryCount {
                 String country;
                 String count;
+
                 public CountryCount(String country, String count) {
                     this.country = country;
                     this.count = count;
@@ -115,7 +117,7 @@ public class CustomerService implements ICustomerService {
 
             var r = statement.executeQuery();
             var list = new LinkedList<CountryCount>();
-            while(r.next()){
+            while (r.next()) {
                 String country = r.getString("Country");
                 String count = r.getString("count");
                 list.addLast(new CountryCount(country, count));
@@ -128,7 +130,7 @@ public class CustomerService implements ICustomerService {
     }
 
     public Object getSpendersFromDatabase() {
-        try (Connection db = ConnectionFactory.getConnection()){
+        try (Connection db = ConnectionFactory.getConnection()) {
             var statement = db.prepareStatement("select Customer.CustomerId, FirstName, LastName, sum(total) as \"total\"\n" +
                     "from Customer\n" +
                     "    join Invoice\n" +
@@ -137,7 +139,7 @@ public class CustomerService implements ICustomerService {
                     "order by total desc;");
 
             var resultSet = statement.executeQuery();
-            class Spender{
+            class Spender {
                 String customerId;
                 String firstName;
                 String lastName;
@@ -167,12 +169,12 @@ public class CustomerService implements ICustomerService {
                 }
             }
             var spenders = new LinkedList<Spender>();
-            while(resultSet.next()){
+            while (resultSet.next()) {
                 var id = resultSet.getString("CustomerId");
                 var firstName = resultSet.getString("FirstName");
                 var lastName = resultSet.getString("LastName");
                 var total = resultSet.getString("total");
-                spenders.addLast(new Spender(id, firstName,lastName, total));
+                spenders.addLast(new Spender(id, firstName, lastName, total));
             }
 
             return spenders;
@@ -184,7 +186,7 @@ public class CustomerService implements ICustomerService {
 
     public Object getPopularGenreFromDatabase(String id) {
         PreparedStatement statement = null;
-        try (Connection db = ConnectionFactory.getConnection()){
+        try (Connection db = ConnectionFactory.getConnection()) {
             statement = db.prepareStatement("with genreView as \n" +
                     "(select Genre.GenreId, Genre.Name, count(Genre.GenreId) as \"count\" from customer\n" +
                     "    join Invoice on customer.CustomerId = Invoice.CustomerId\n" +
@@ -200,8 +202,9 @@ public class CustomerService implements ICustomerService {
             statement.setString(1, id);
             var result = statement.executeQuery();
             var genres = new LinkedList<Genre>();
-            class GenreCount extends Genre{
+            class GenreCount extends Genre {
                 final String count;
+
                 public GenreCount(String id, String name, String count) {
                     super(id, name);
                     this.count = count;
@@ -211,11 +214,11 @@ public class CustomerService implements ICustomerService {
                     return count;
                 }
             }
-            while(result.next()){
+            while (result.next()) {
                 var genreId = result.getString("GenreId");
                 var name = result.getString("Name");
                 var count = result.getString("count");
-                genres.addLast(new GenreCount(genreId,name, count));
+                genres.addLast(new GenreCount(genreId, name, count));
             }
 
             return genres;
