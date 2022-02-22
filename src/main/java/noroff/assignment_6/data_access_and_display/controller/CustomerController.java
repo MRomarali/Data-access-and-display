@@ -42,7 +42,7 @@ public class CustomerController {
     @PutMapping("/{id}")
     public Object updateCustomerById(@PathVariable("id") String id, @RequestBody Customer customer){
         Object result = customerService.updateCustomerById(id, customer);
-        return result.toString();
+        return result;
     }
 
     // GET
