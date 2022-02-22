@@ -4,4 +4,5 @@ customer.
 The controllers uses methods from data.access in order to get data from the database.
 data.access returns a object.
 
-
+should contain following classes:
+CustomerController
