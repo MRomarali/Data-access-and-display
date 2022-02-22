@@ -4,7 +4,6 @@ import noroff.assignment_6.data_access_and_display.data_access.ConnectionFactory
 import noroff.assignment_6.data_access_and_display.models.Customer;
 import noroff.assignment_6.data_access_and_display.models.Genre;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.*;
 
 import java.sql.*;
 import java.util.LinkedList;
@@ -66,13 +65,6 @@ public class CustomerService implements ICustomerService {
         }
     }
 
-    // GET
-    // /api/customers
-    // /api/customers?limit=10&offset=50
-    public Object getCustomers(@RequestParam(required = false) String limit, @RequestParam(required = false) String offset) {
-        return getCustomersFromDatabase();
-    }
-
     public Object getCustomersFromDatabase() {
         try(Connection db = ConnectionFactory.getConnection()){
             var statement = db.prepareStatement("select CustomerId, FirstName, LastName, Country, PostalCode, Phone, Email from Customer;");
@@ -90,11 +82,6 @@ public class CustomerService implements ICustomerService {
         }
     }
 
-    // /api/customers/:id
-    public Object getCustomerById(@PathVariable("id") String id)  {
-        return getCustomerByIdFromDatabase(id);
-    }
-
     public Object getCustomerByIdFromDatabase(String id) {
         try(Connection db = ConnectionFactory.getConnection()){
             PreparedStatement statement = db.prepareStatement("select CustomerId, FirstName, LastName, Country, PostalCode, Phone, Email from Customer where CustomerId = ?");
@@ -107,15 +94,6 @@ public class CustomerService implements ICustomerService {
             e.printStackTrace();
             return "Error no customer was found with id: " + id;
         }
-    }
-
-    // /api/customers/countries
-    @CrossOrigin
-    @GetMapping("/countries")
-    public Object getCountries() {
-        return getCustomerCountryCountFromDatabase();
-
-
     }
 
     public Object getCustomerCountryCountFromDatabase() {
@@ -150,11 +128,6 @@ public class CustomerService implements ICustomerService {
             e.printStackTrace();
             return "Error";
         }
-    }
-
-    // /api/customers/spenders
-    public Object getSpenders() {
-        return getSpendersFromDatabase();
     }
 
     public Object getSpendersFromDatabase() {
@@ -210,11 +183,6 @@ public class CustomerService implements ICustomerService {
             e.printStackTrace();
             return "Error";
         }
-    }
-
-    // /api/customers/:id/popular/genre
-    public Object getPopularGenre(@PathVariable("id") String id) {
-        return getPopularGenreFromDatabase(id);
     }
 
     public Object getPopularGenreFromDatabase(String id) {
