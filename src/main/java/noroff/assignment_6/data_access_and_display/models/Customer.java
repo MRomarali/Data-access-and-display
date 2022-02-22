@@ -1,4 +1,4 @@
-package noroff.assignment_6.data_access_and_display.Models;
+package noroff.assignment_6.data_access_and_display.models;
 
 public class Customer {
     String id;
