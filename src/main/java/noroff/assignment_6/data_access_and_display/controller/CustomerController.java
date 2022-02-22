@@ -41,8 +41,7 @@ public class CustomerController {
     @CrossOrigin
     @PutMapping("/{id}")
     public Object updateCustomerById(@PathVariable("id") String id, @RequestBody Customer customer){
-        Object result = customerService.updateCustomerById(id, customer);
-        return result;
+        return customerService.updateCustomerById(id, customer);
     }
 
     // GET
