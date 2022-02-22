@@ -1,11 +1,8 @@
-package noroff.assignment_6.data_access_and_display.controller;
+package noroff.assignment_6.data_access_and_display.controllers;
 
 import org.springframework.web.bind.annotation.*;
 
-import java.io.Serializable;
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedList;
 
 /**
