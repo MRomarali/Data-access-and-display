@@ -43,6 +43,7 @@ public class CustomerService implements ICustomerService {
     // /api/customers/:id
     public Object updateCustomerById(String id, Customer customer) {
         try(Connection db = ConnectionFactory.getConnection()) {
+            if(!customer.getId().equals(id)) return "Id does not match customer Id";
             var s = db.prepareStatement("update Customer set FirstName = ?, LastName = ?, Country = ?, PostalCode = ?, Phone = ?, Email = ? where CustomerId = ?;");
             s.setString(1, customer.getFirstName());
             s.setString(2, customer.getLastName());
@@ -52,11 +53,16 @@ public class CustomerService implements ICustomerService {
             s.setString(6, customer.getEmail());
             s.setString(7, customer.getId());
             var result = s.executeUpdate();
-            return result;
+            if(result > 0){
+                return customer;
+            }
+            else {
+                return "customer with id:"+ id+ " not found";
+            }
 
         } catch (SQLException e) {
             e.printStackTrace();
-        return "error";
+        return "Server error";
         }
     }
 
