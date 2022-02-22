@@ -15,9 +15,6 @@ public class CustomerService implements ICustomerService {
     // Add database connection
     private CustomerService customerRepository;
 
-    public Object addCustomer(@RequestBody Customer c) {
-        return addCustomerToDatabase(c);
-    }
 
     public Object addCustomerToDatabase(Customer c) {
         try(Connection db = ConnectionFactory.getConnection()){
