@@ -3,7 +3,7 @@
 <div id="top"></div>
 
 <div align="center">
-  <img src="src/main/resources/iTunes.png" alt="iTunes logo" height="250">
+  <img src="src/main/resources/image/iTunes.png" alt="iTunes logo" height="250">
   <h3 align="center">Assignment 6</h3>
   <p align="center">
     Heroku App
@@ -61,7 +61,6 @@ following minimum requirements (See Appendix A-B for details):</p>
         d) The application must be published as a Docker container on Heroku.
     </p>
   </li>
-  <li>
     <p>3) Submit</p>
     <p>
         a) Create a GitLab repository containing all your code. 
@@ -75,7 +74,6 @@ following minimum requirements (See Appendix A-B for details):</p>
     </p>
     # Appendix A: Reading data with JDBC 
     ### 1) Introduction and overview
-    
     <p>Some hotshot media mogul has heard of your newly acquired skills in Java.      They have contracted you and a friend to 
   stride on the edge of copyright glory and start re-making iTunes, but under a     different name. They have spoken to 
   lawyers and are certain a working prototype should not cause any problems and     ensured that you will be safe. The 
@@ -92,7 +90,6 @@ following minimum requirements (See Appendix A-B for details):</p>
 JSON). </p>
     #### HINT: Don’t be afraid to go deeper with endpoint naming hierarchies, it’s perfectly fine to have an endpoint like:
 /api/customers/:customerId/popular/genre
-    
 ### 3) Customer requirements
     <p>For customers in the database, the following functionality should be catered for:</p>
     <p>1. Read all the customers in the database, this should display their: Id, first name, last name, country, postal code, 
@@ -140,7 +137,7 @@ b) The search results page will show the query the user has made, i.e. Search re
 up”. Underneath this, the results will be shown for the search. The search results should show a row where the 
 track name, artist, album, and genre are shown. The search should also be case insensitive. 
 </p>
-#### HINT: Use @Controller for the controllers that are used with Thymeleaf and @RestController for the API endpoints
+#### HINT: Use @Controller for the controllers that are used with Thymeleaf and @RestController for the API endpoint</ol>
 
 # Resources
 
@@ -169,7 +166,7 @@ Heroku App:
 
 <a href="link here</a>
 
-<p align="right">(<a href="#top">back to top</a>)</p>
+(<a href="#top">back to top</a>)
 
 # Maintainers
 
@@ -181,7 +178,7 @@ Heroku App:
 [@OmarAbdiAli](https://github.com/OmarAbdiAli)
 [@Alex on](https://github.com/shuhia)
 
-<p align="right">(<a href="#top">back to top</a>)</p>
+(<a href="#top">back to top</a>)
 
 # Conventions
 
@@ -191,11 +188,11 @@ Heroku App:
 
 Read more: [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) v1.0.0
 
-<p align="right">(<a href="#top">back to top</a>)</p>
+(<a href="#top">back to top</a>)
 
 # Contact
 
 OmarAbdiAli: <a href="mailto:github.omarabdiali0@gmail.com">github.OmarAbdiAli@gmail.com</a>
 Alex On: <a href="mailto:github.shuhia.on@gmail.com">github.shuhia.on@gmail.com</a>
 
-<p align="right">(<a href="#top">back to top</a>)</p>
+(<a href="#top">back to top</a>)
