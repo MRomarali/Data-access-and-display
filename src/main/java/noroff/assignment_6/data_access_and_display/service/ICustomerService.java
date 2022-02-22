@@ -7,7 +7,7 @@ import java.sql.SQLException;
 public interface ICustomerService {
     Object addCustomer(Customer c);
     Object addCustomerToDatabase(Customer c);
-    Object updateCustomerById(String id) throws SQLException;
+    Object updateCustomerById(String id, Customer customer);
     Object getCustomers(String limit, String offset);
     Object getCustomerById(String id);
     Object getCustomerByIdFromDatabase(String id);
