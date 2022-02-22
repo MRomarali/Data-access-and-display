@@ -1,6 +1,7 @@
 package noroff.assignment_6.data_access_and_display.controller;
 
 import noroff.assignment_6.data_access_and_display.models.Customer;
+import noroff.assignment_6.data_access_and_display.service.CustomerService;
 import noroff.assignment_6.data_access_and_display.service.ICustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -30,10 +31,6 @@ public class CustomerController {
     @CrossOrigin
     @PostMapping("")
     public Object addCustomer(@RequestBody Customer c) {
-        return addCustomerToDatabase(c);
-    }
-
-    private Object addCustomerToDatabase(Customer c) {
         return customerService.addCustomerToDatabase(c);
     }
 
