@@ -42,16 +42,21 @@ public class CustomerServiceImpl implements ICustomerService {
     // /api/customers/:id
     public Object updateCustomerById(@PathVariable("id") String id) {
         try(Connection db = ConnectionFactory.getConnection()) {
-            PreparedStatement statement = db.prepareStatement("" +
-                    " ?");
-            statement.setString(1, id);
-            ResultSet result = statement.executeQuery();
+            var s = db.prepareStatement("update Customer set FirstName = ?, LastName = ?, Country = ?, PostalCode = ?, Phone = ?, Email = ? where CustomerId = ?;");
+            s.setString(1, customer.getFirstName());
+            s.setString(2, customer.getLastName());
+            s.setString(3, customer.getCountry());
+            s.setString(4, customer.getPostalCode());
+            s.setString(5, customer.getPhoneNumber());
+            s.setString(6, customer.getEmail());
+            s.setString(7, customer.getId());
+            var result = s.executeUpdate();
+            return result;
 
-            return result.toString();
         } catch (SQLException e) {
             e.printStackTrace();
+        return "error";
         }
-        return null;
     }
 
     // GET
