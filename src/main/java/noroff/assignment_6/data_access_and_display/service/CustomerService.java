@@ -10,11 +10,11 @@ import java.sql.*;
 import java.util.LinkedList;
 
 @Service
-public class CustomerServiceImpl implements ICustomerService {
+public class CustomerService implements ICustomerService {
 
     // SQL Queries
     // Add database connection
-    private CustomerServiceImpl customerRepository;
+    private CustomerService customerRepository;
 
     public Object addCustomer(@RequestBody Customer c) {
         return addCustomerToDatabase(c);
@@ -39,8 +39,9 @@ public class CustomerServiceImpl implements ICustomerService {
         }
     }
 
+
     // /api/customers/:id
-    public Object updateCustomerById(@PathVariable("id") String id) {
+    public Object updateCustomerById(String id, Customer customer) {
         try(Connection db = ConnectionFactory.getConnection()) {
             var s = db.prepareStatement("update Customer set FirstName = ?, LastName = ?, Country = ?, PostalCode = ?, Phone = ?, Email = ? where CustomerId = ?;");
             s.setString(1, customer.getFirstName());
