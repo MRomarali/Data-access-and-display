@@ -3,59 +3,55 @@ package noroff.assignment_6.data_access_and_display.models;
 public class Song {
     String id;
     String name;
-    String albumId;
-    String mediaTypeId;
-    String genreId;
-    String composer;
-    String milliseconds;
-    String bytes;
-    String unitPrice;
+    String artist;
+    String album;
+    String genre;
 
-    public Song(String id, String name, String albumId, String mediaTypeId, String genreId, String composer, String milliseconds, String bytes, String unitPrice) {
+    public Song(String id, String name, String artist, String album, String genre) {
         this.id = id;
         this.name = name;
-        this.albumId = albumId;
-        this.mediaTypeId = mediaTypeId;
-        this.genreId = genreId;
-        this.composer = composer;
-        this.milliseconds = milliseconds;
-        this.bytes = bytes;
-        this.unitPrice = unitPrice;
+        this.artist = artist;
+        this.album = album;
+        this.genre = genre;
     }
 
     public String getId() {
         return id;
     }
 
+    public void setId(String id) {
+        this.id = id;
+    }
+
     public String getName() {
         return name;
     }
 
-    public String getAlbumId() {
-        return albumId;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public String getMediaTypeId() {
-        return mediaTypeId;
+    public String getArtist() {
+        return artist;
     }
 
-    public String getGenreId() {
-        return genreId;
+    public void setArtist(String artist) {
+        this.artist = artist;
     }
 
-    public String getComposer() {
-        return composer;
+    public String getAlbum() {
+        return album;
     }
 
-    public String getMilliseconds() {
-        return milliseconds;
+    public void setAlbum(String album) {
+        this.album = album;
     }
 
-    public String getBytes() {
-        return bytes;
+    public String getGenre() {
+        return genre;
     }
 
-    public String getUnitPrice() {
-        return unitPrice;
+    public void setGenre(String genre) {
+        this.genre = genre;
     }
 }

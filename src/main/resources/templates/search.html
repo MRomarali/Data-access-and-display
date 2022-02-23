@@ -32,9 +32,9 @@
         <tr th:each ="song:${songs}">
             <td th:text="${song.getId()}"></td>
             <td th:text="${song.getName()}"></td>
-            <td th:text="${song.getComposer()}"></td>
-            <td th:text="${song.getAlbumId()}"></td>
-            <td th:text="${song.getGenreId()}"></td>
+            <td th:text="${song.getAlbum()}"></td>
+            <td th:text="${song.getArtist()}"></td>
+            <td th:text="${song.getGenre()}"></td>
         </tr>
         </tbody>
     </table>

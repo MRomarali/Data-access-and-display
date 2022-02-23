@@ -41,7 +41,10 @@ public class MusicService implements IMusicService {
     public Collection<Song> getSongs(int limit) {
         try (Connection connection = ConnectionFactory.getConnection()) {
             // Set query
-            String sqlQuery = "SELECT TrackId, Name, AlbumId, MediaTypeId, GenreId, Composer, Milliseconds, Bytes, UnitPrice FROM Track ORDER BY random() LIMIT ?;";
+            String sqlQuery = "select Track.TrackId as \"id\",Track.Name as \"name\", Artist.Name as \"artist\", Album.Title as \"album\", Genre.Name as \"genre\" from Track\n" +
+                    "                            join Album on Track.AlbumId = Album.AlbumId\n" +
+                    "                            join Artist on Album.ArtistId = Artist.ArtistId\n" +
+                    "                            join Genre on Genre.GenreId = Track.GenreId ORDER BY random() LIMIT ?;";
             var statement = connection.prepareStatement(sqlQuery);
             statement.setString(1, String.valueOf(limit));
             // Execute query
@@ -49,16 +52,12 @@ public class MusicService implements IMusicService {
             var collection = new LinkedList<Song>();
             // Get objects
             while(resultSet.next()){
-                String id = resultSet.getString("TrackId");
-                String name = resultSet.getString("Name");
-                String albumId = resultSet.getString("AlbumId");
-                String mediaTypeId = resultSet.getString("MediaTypeId");
-                String genreId = resultSet.getString("GenreId");
-                String composer = resultSet.getString("Composer");
-                String milliseconds = resultSet.getString("Milliseconds");
-                String bytes = resultSet.getString("Bytes");
-                String unitPrice = resultSet.getString("UnitPrice");
-                var song = new Song(id,name,albumId,mediaTypeId,genreId,composer,milliseconds,bytes,unitPrice);
+                String id = resultSet.getString("id");
+                String name = resultSet.getString("name");
+                String artist = resultSet.getString("artist");
+                String album = resultSet.getString("album");
+                String genre = resultSet.getString("genre");
+                var song = new Song(id,name,artist,album,genre);
                 collection.add(song);
             }
             return collection;
@@ -96,7 +95,11 @@ public class MusicService implements IMusicService {
     public Collection<Song> getSongs(String songName) {
         try (Connection connection = ConnectionFactory.getConnection()) {
             // Set query
-            String sqlQuery = "SELECT TrackId, Name, AlbumId, MediaTypeId, GenreId, Composer, Milliseconds, Bytes, UnitPrice FROM Track where Name like ?";
+            String sqlQuery = """
+                    select Track.TrackId as "id",Track.Name as "name", Artist.Name as "artist", Album.Title as "album", Genre.Name as "genre" from Track
+                            join Album on Track.AlbumId = Album.AlbumId
+                            join Artist on Album.ArtistId = Artist.ArtistId
+                            join Genre on Genre.GenreId = Track.GenreId where Track.Name like ?;""";
             var statement = connection.prepareStatement(sqlQuery);
             String searchTerm = "%"+songName+"%";
             statement.setString(1,searchTerm);
@@ -105,16 +108,13 @@ public class MusicService implements IMusicService {
             var collection = new LinkedList<Song>();
             // Get objects
             while(resultSet.next()){
-                String id = resultSet.getString("TrackId");
-                String name = resultSet.getString("Name");
-                String albumId = resultSet.getString("AlbumId");
-                String mediaTypeId = resultSet.getString("MediaTypeId");
-                String genreId = resultSet.getString("GenreId");
-                String composer = resultSet.getString("Composer");
-                String milliseconds = resultSet.getString("Milliseconds");
-                String bytes = resultSet.getString("Bytes");
-                String unitPrice = resultSet.getString("UnitPrice");
-                var song = new Song(id,name,albumId,mediaTypeId,genreId,composer,milliseconds,bytes,unitPrice);
+                String id = resultSet.getString("id");
+                String name = resultSet.getString("name");
+                String artist = resultSet.getString("artist");
+                String album = resultSet.getString("album");
+                String genre = resultSet.getString("genre");
+
+                var song = new Song(id,name,artist,album,genre);
                 collection.add(song);
             }
             return collection;
@@ -124,3 +124,4 @@ public class MusicService implements IMusicService {
         }
     }
 }
+
