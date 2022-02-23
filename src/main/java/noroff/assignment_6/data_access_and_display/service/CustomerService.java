@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import java.sql.*;
+import java.util.Collection;
 import java.util.LinkedList;
 
 @Service
@@ -64,7 +65,7 @@ public class CustomerService implements ICustomerService {
         }
     }
 
-    public Object getCustomersFromDatabase() {
+    public Collection<Customer> getCustomersFromDatabase() {
         try (Connection db = ConnectionFactory.getConnection()) {
             var statement = db.prepareStatement("select CustomerId, FirstName, LastName, Country, PostalCode, Phone, Email from Customer;");
             var r = statement.executeQuery();
@@ -76,7 +77,7 @@ public class CustomerService implements ICustomerService {
             return customers;
         } catch (SQLException e) {
             e.printStackTrace();
-            return "failed to find any customers";
+            return null;
         }
     }
 
