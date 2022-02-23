@@ -2,6 +2,7 @@ package noroff.assignment_6.data_access_and_display.service;
 
 import noroff.assignment_6.data_access_and_display.data_access.ConnectionFactory;
 import noroff.assignment_6.data_access_and_display.models.Artist;
+import noroff.assignment_6.data_access_and_display.models.Genre;
 import noroff.assignment_6.data_access_and_display.models.Song;
 
 import java.sql.Connection;
@@ -15,7 +16,7 @@ public class MusicService implements IMusicService {
     public Collection<?> getArtists(int limit) {
         try (Connection connection = ConnectionFactory.getConnection()) {
             // Set query
-            String sqlQuery = "SELECT Name, GenreId FROM Genre ORDER BY random() LIMIT ?;";
+            String sqlQuery = "SELECT Name, ArtistId FROM Artist ORDER BY random() LIMIT ?;";
             var statement = connection.prepareStatement(sqlQuery);
             statement.setString(1, String.valueOf(limit));
             // Execute query
@@ -23,7 +24,7 @@ public class MusicService implements IMusicService {
             var collection = new LinkedList<Artist>();
             // Get objects
             while(resultSet.next()){
-                String id = resultSet.getString("GenreId");
+                String id = resultSet.getString("ArtistId");
                 String name = resultSet.getString("Name");
                 Artist artist = new Artist(id,name);
                 collection.add(artist);
@@ -67,7 +68,26 @@ public class MusicService implements IMusicService {
     }
 
     @Override
-    public Collection<Object> getGenres(int limit) {
-        return null;
+    public Collection<?> getGenres(int limit) {
+        try (Connection connection = ConnectionFactory.getConnection()) {
+            // Set query
+            String sqlQuery = "SELECT Name, GenreId FROM Genre ORDER BY random() LIMIT ?;";
+            var statement = connection.prepareStatement(sqlQuery);
+            statement.setString(1, String.valueOf(limit));
+            // Execute query
+            var resultSet = statement.executeQuery();
+            var collection = new LinkedList<Genre>();
+            // Get objects
+            while(resultSet.next()){
+                String id = resultSet.getString("GenreId");
+                String name = resultSet.getString("Name");
+                var genre = new Genre(id,name);
+                collection.add(genre);
+            }
+            return collection;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return Collections.singleton("Request failed");
+        }
     }
 }
