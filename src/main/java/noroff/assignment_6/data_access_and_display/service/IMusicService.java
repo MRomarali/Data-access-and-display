@@ -6,11 +6,11 @@ import java.util.Collection;
 
 public interface IMusicService {
     // Method to get x random artists
-    Collection<Object> getArtists(int limit);
+    Collection<?> getArtists(int limit);
 
     // Method to get x random songs
-    Collection<Object> getSongs(int limit);
+    Collection<?> getSongs(int limit);
 
     // Method to get x random genres
-    Collection<Object> getGenres(int limit);
+    Collection<?> getGenres(int limit);
 }
