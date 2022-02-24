@@ -14,9 +14,11 @@
 </head>
 <body>
 <form id="customers-form" action="/customers" method="get">
-    <input id="limit" name="limit" placeholder="Enter limit"/>
-    <input id="offset" name="offset" placeholder="Enter offset"/>
-    <button type="submit">Submit</button>
+    <label for="customers-limit">limit:</label>
+    <input id="customers-limit" type="number" name="limit" th:value ="${limit}" min="1" required/>
+    <label for="customers-offset">offset:</label>
+    <input id="customers-offset" type="number" name="offset" th:value ="${offset}" min = "0" required/>
+    <button type="submit">Get customers</button>
 </form>
 <table class="table" id="customers-table">
     <thead>

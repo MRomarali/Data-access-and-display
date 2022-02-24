@@ -23,7 +23,7 @@ public class SearchController {
     }
 
     @GetMapping("/search")
-    public String results(@RequestParam(name = "query") String query, Model model) {
+    public String results(@RequestParam(name = "query") String query, Model model ) {
         model.addAttribute("songs", musicService.getSongs(query));
         return "search";
     }

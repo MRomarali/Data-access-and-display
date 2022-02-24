@@ -21,6 +21,8 @@ public class CustomerController {
     @GetMapping("/customers")
     public String home(Model model, @RequestParam(required = false) String limit, @RequestParam(required = false) String offset) {
         System.out.println("limit: "+ limit + " offset: "+ offset);
+        model.addAttribute("limit", limit);
+        model.addAttribute("offset", offset);
         model.addAttribute("customers", customerService.getCustomersFromDatabase(limit, offset));
         return "customers";
     }
