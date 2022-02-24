@@ -13,7 +13,29 @@
     <title>Customers</title>
 </head>
 <body>
-<form id="customers-form" action="/customers" method="get">
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#"></a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="./index">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="./customers">Get customers</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="./search">Search for songs</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<div class="container">
+<form class="form" id="customers-form" action="/customers" method="get">
     <label for="customers-limit">limit:</label>
     <input id="customers-limit" type="number" name="limit" th:value ="${limit}" min="1" required/>
     <label for="customers-offset">offset:</label>
@@ -44,5 +66,6 @@
     </tr>
     </tbody>
 </table>
+</div>
 </body>
 </html>
