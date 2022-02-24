@@ -65,10 +65,19 @@ public class CustomerService implements ICustomerService {
         }
     }
 
-    public Collection<Customer> getCustomersFromDatabase() {
+    public Collection<Customer> getCustomersFromDatabase(String limit, String offset) {
         try (Connection db = ConnectionFactory.getConnection()) {
-            var statement = db.prepareStatement("select CustomerId, FirstName, LastName, Country, PostalCode, Phone, Email from Customer;");
-            var r = statement.executeQuery();
+            if(limit == null) {
+                limit = "50";
+            }
+            if(offset == null){
+                offset = "0";
+            }
+            var statement = db.prepareStatement("select CustomerId, FirstName, LastName, Country, PostalCode, Phone, Email from Customer limit ? offset ?");
+        statement.setInt(1, Integer.parseInt(limit));
+        statement.setInt(2, Integer.parseInt(offset));
+        var r = statement.executeQuery();
+
             var customers = new LinkedList<Customer>();
             while (r.next()) {
                 var customer = new Customer(r.getString("CustomerId"), r.getString("FirstName"), r.getString("LastName"), r.getString("Country"), r.getString("PostalCode"), r.getString("Phone"), r.getString("Email"));
