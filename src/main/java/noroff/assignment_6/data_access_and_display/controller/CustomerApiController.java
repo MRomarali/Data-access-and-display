@@ -45,7 +45,7 @@ public class CustomerApiController {
     @CrossOrigin
     @GetMapping("")
     public Object getCustomers(@RequestParam(required = false) String limit, @RequestParam(required = false) String offset) {
-        return customerService.getCustomersFromDatabase();
+        return customerService.getCustomersFromDatabase(limit, offset);
     }
 
     // /api/customers/:id
