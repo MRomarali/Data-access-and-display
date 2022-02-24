@@ -8,7 +8,7 @@
   <p align="center">
     Heroku App
     <br />
-    <a href="Link to heroku app here">Demo</a>
+    <a href="https://data-access-app-1000.herokuapp.com/">Demo</a>
   </p>
 </div>
 
