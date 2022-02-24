@@ -15,4 +15,5 @@ public interface ICustomerService {
     Object getSpendersFromDatabase();
     Collection<Customer> getCustomersFromDatabase(String limit, String offset);
     Object getPopularGenreFromDatabase(String id);
+    Object getCustomerByName(String name);
 }

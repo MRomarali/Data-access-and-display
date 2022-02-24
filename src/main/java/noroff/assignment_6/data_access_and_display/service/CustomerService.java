@@ -237,4 +237,19 @@ public class CustomerService implements ICustomerService {
             return "Error";
         }
     }
+
+    @Override
+    public Object getCustomerByName(String name) {
+        try (Connection db = ConnectionFactory.getConnection()) {
+            PreparedStatement statement = db.prepareStatement("select CustomerId, FirstName, LastName, Country, PostalCode, Phone, Email from Customer where FirstName like ? or LastName like ? limit 1");
+            statement.setString(1, "%"+name+"%");
+            var r = statement.executeQuery();
+            Customer customer = new Customer(r.getString("CustomerId"), r.getString("FirstName"), r.getString("LastName"), r.getString("Country"), r.getString("PostalCode"), r.getString("Phone"), r.getString("Email"));
+            return customer;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.out.println("No customer was found with id: "+ name);
+            return "Error no customer was found with id: " + name;
+        }
+    }
 }

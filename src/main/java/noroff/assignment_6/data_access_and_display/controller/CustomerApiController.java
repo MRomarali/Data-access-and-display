@@ -39,6 +39,12 @@ public class CustomerApiController {
         return customerService.updateCustomerById(id, customer);
     }
 
+    @CrossOrigin
+    @GetMapping("/name/{name}")
+    public Object getCustomerByName(@PathVariable("name") String name){
+        return customerService.getCustomerByName(name);
+    }
+
     // GET
     // /api/customers
     // /api/customers?limit=10&offset=50
