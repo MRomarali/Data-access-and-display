@@ -1,12 +1,9 @@
 package noroff.assignment_6.data_access_and_display.controller;
 
 import noroff.assignment_6.data_access_and_display.models.Customer;
-import noroff.assignment_6.data_access_and_display.service.CustomerService;
 import noroff.assignment_6.data_access_and_display.service.ICustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
-import java.sql.*;
 
 /**
  * REST API
@@ -15,7 +12,7 @@ import java.sql.*;
 @RestController
 @CrossOrigin
 @RequestMapping("/api/customers")
-public class CustomerController {
+public class CustomerApiController {
     // SQL Queries
     // Add database connection
 
@@ -23,7 +20,7 @@ public class CustomerController {
     ICustomerService customerService;
     Customer c = new Customer("1", "Omar", "Ali", "Sweden", "12345", "073 123 45 67", "omar@gmail.com");
 
-    public CustomerController(@Autowired ICustomerService customerService) {
+    public CustomerApiController(@Autowired ICustomerService customerService) {
         this.customerService = customerService;
     }
 
