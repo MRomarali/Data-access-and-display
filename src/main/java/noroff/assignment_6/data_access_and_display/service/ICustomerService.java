@@ -13,6 +13,6 @@ public interface ICustomerService {
     Object getCustomerByIdFromDatabase(String id);
     Object getCustomerCountryCountFromDatabase();
     Object getSpendersFromDatabase();
-    Collection<Customer> getCustomersFromDatabase();
+    Collection<Customer> getCustomersFromDatabase(String limit, String offset);
     Object getPopularGenreFromDatabase(String id);
 }
