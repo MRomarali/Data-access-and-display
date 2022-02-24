@@ -14,7 +14,7 @@
 <div class="container">
     <form action="/search" class="form" method="get">
         <div id="song-search-bar">
-            <input class="form-control" name="query" placeholder="Enter a song name" required/>
+            <input class="form-control" name="query" placeholder="Enter a song name" th:value="${query}" minlength="1" required/>
             <button class="btn btn-primary w-100" type="submit">Search</button>
         </div>
     </form>
